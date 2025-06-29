@@ -30,9 +30,11 @@ class BookScreen extends StatelessWidget {
     if (status == BookStatus.read) {
       return Icons.done;
     } else if (status == BookStatus.inProgress) {
-      return Icons.autorenew;
+      return Icons.play_circle_outline;
     } else if (status == BookStatus.forLater) {
-      return Icons.timelapse;
+      return Icons.schedule;
+    } else if (status == BookStatus.wishlist) {
+      return Icons.favorite_border;
     } else if (status == BookStatus.unfinished) {
       return Icons.not_interested;
     } else {
@@ -47,6 +49,8 @@ class BookScreen extends StatelessWidget {
       return LocaleKeys.book_status_in_progress.tr();
     } else if (status == BookStatus.forLater) {
       return LocaleKeys.book_status_for_later.tr();
+    } else if (status == BookStatus.wishlist) {
+      return LocaleKeys.book_status_wishlist.tr();
     } else if (status == BookStatus.unfinished) {
       return LocaleKeys.book_status_unfinished.tr();
     } else {
@@ -61,6 +65,8 @@ class BookScreen extends StatelessWidget {
       return LocaleKeys.start_reading.tr();
     } else if (status == BookStatus.unfinished) {
       return LocaleKeys.start_reading.tr();
+    } else if (status == BookStatus.wishlist) {
+      return LocaleKeys.book_acquired.tr();
     } else {
       return null;
     }
@@ -115,6 +121,14 @@ class BookScreen extends StatelessWidget {
         readings: book.readings.isNotEmpty
             ? (book.readings..[0] = book.readings[0].copyWith(startDate: date))
             : [Reading(startDate: date)],
+      );
+
+      bookCubit.updateBook(book);
+
+      // Acquire the book
+    } else if (status == BookStatus.wishlist) {
+      book = book.copyWith(
+        status: BookStatus.forLater,
       );
 
       bookCubit.updateBook(book);
@@ -176,6 +190,7 @@ class BookScreen extends StatelessWidget {
                           showChangeStatus:
                               (state.status == BookStatus.inProgress ||
                                   state.status == BookStatus.forLater ||
+                                  state.status == BookStatus.wishlist ||
                                   state.status == BookStatus.unfinished),
                           changeStatusText: _decideChangeStatusText(
                             state.status,

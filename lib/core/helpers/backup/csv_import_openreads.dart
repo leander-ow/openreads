@@ -206,9 +206,11 @@ class CSVImportOpenreads {
         ? BookStatus.inProgress
         : statusField == 'planned'
             ? BookStatus.forLater
-            : statusField == 'abandoned'
-                ? BookStatus.unfinished
-                : BookStatus.read;
+            : statusField == 'wishlist'
+                ? BookStatus.wishlist
+                : statusField == 'abandoned'
+                    ? BookStatus.unfinished
+                    : BookStatus.read;
   }
 
   static String? _getTags(int i, List<List<dynamic>> csv) {

@@ -25,19 +25,13 @@ class AnimatedStatusButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width - 50;
-    final selectedWidth = (2 / 5) * width;
-    final unselectedWidth = (1 / 5) * width;
-    final defaultWidth = (1 / 4) * width;
+    final baseWidth = (MediaQuery.of(context).size.width - 80) / 5;
+    final selectedWidth = baseWidth + 20;
 
     return AnimatedContainer(
       duration: _duration,
       height: height,
-      width: currentStatus == null
-          ? defaultWidth
-          : isSelected
-              ? selectedWidth
-              : unselectedWidth,
+      width: isSelected ? selectedWidth : baseWidth,
       alignment: Alignment.center,
       child: InkWell(
         customBorder: RoundedRectangleBorder(

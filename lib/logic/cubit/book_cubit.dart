@@ -28,6 +28,8 @@ class BookCubit extends Cubit {
       BehaviorSubject<List<Book>>();
   final BehaviorSubject<List<Book>> _toReadBooksFetcher =
       BehaviorSubject<List<Book>>();
+  final BehaviorSubject<List<Book>> _wishlistBooksFetcher =
+      BehaviorSubject<List<Book>>();
   final BehaviorSubject<List<Book>> _deletedBooksFetcher =
       BehaviorSubject<List<Book>>();
   final BehaviorSubject<List<Book>> _unfinishedBooksFetcher =
@@ -50,6 +52,7 @@ class BookCubit extends Cubit {
   Stream<List<Book>> get finishedBooks => _finishedBooksFetcher.stream;
   Stream<List<Book>> get inProgressBooks => _inProgressBooksFetcher.stream;
   Stream<List<Book>> get toReadBooks => _toReadBooksFetcher.stream;
+  Stream<List<Book>> get wishlistBooks => _wishlistBooksFetcher.stream;
   Stream<List<Book>> get deletedBooks => _deletedBooksFetcher.stream;
   Stream<List<Book>> get unfinishedBooks => _unfinishedBooksFetcher.stream;
   Stream<List<Book>> get searchBooks => _searchBooksFetcher.stream;
@@ -74,6 +77,7 @@ class BookCubit extends Cubit {
     getFinishedBooks();
     getInProgressBooks();
     getToReadBooks();
+    getWishlistBooks();
     getAllBooks();
   }
 
@@ -101,6 +105,7 @@ class BookCubit extends Cubit {
     getFinishedBooks();
     getInProgressBooks();
     getToReadBooks();
+    getWishlistBooks();
     getUnfinishedBooks();
   }
 
@@ -119,6 +124,11 @@ class BookCubit extends Cubit {
   getToReadBooks() async {
     List<Book> books = await repository.getBooks(2);
     _toReadBooksFetcher.sink.add(books);
+  }
+
+  getWishlistBooks() async {
+    List<Book> books = await repository.getBooks(4);
+    _wishlistBooksFetcher.sink.add(books);
   }
 
   getDeletedBooks() async {

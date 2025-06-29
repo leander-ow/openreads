@@ -5,9 +5,11 @@ abstract class LocaleKeys {
   static const books_in_progress = 'books_in_progress';
   static const books_for_later = 'books_for_later';
   static const books_unfinished = 'books_unfinished';
+  static const books_wishlist = 'books_wishlist';
   static const book_status_finished = 'book_status_finished';
   static const book_status_in_progress = 'book_status_in_progress';
   static const book_status_for_later = 'book_status_for_later';
+  static const book_status_wishlist = 'book_status_wishlist';
   static const book_status_unfinished = 'book_status_unfinished';
   static const book_format_paperback = 'book_format_paperback';
   static const book_format_hardcover = 'book_format_hardcover';
@@ -39,6 +41,7 @@ abstract class LocaleKeys {
   static const restore_book_question = 'restore_book_question';
   static const finish_reading = 'finish_reading';
   static const start_reading = 'start_reading';
+  static const book_acquired = 'book_acquired';
   static const rate_book = 'rate_book';
   static const skip = 'skip';
   static const pages_uppercase = 'pages_uppercase';

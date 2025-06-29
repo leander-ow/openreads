@@ -756,6 +756,8 @@ class _BooksScreenState extends State<BooksScreen>
       return BookStatus.inProgress;
     } else if (_tabController.index == 2) {
       return BookStatus.forLater;
+    } else if (_tabController.index == 3) {
+      return BookStatus.wishlist;
     } else {
       return BookStatus.read;
     }
@@ -892,7 +894,13 @@ class _BooksScreenState extends State<BooksScreen>
 
     super.initState();
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -925,7 +933,7 @@ class _BooksScreenState extends State<BooksScreen>
               resizeToAvoidBottomInset: true,
               appBar: selectedBookIds.isNotEmpty
                   ? _buildMultiSelectAppBar(context)
-                  : _buildAppBar(context),
+                  : _buildAppBar(context, _tabController.index),
               floatingActionButton: selectedBookIds.isNotEmpty
                   ? _buildMultiSelectFAB(state)
                   : _buildFAB(context),
@@ -986,11 +994,13 @@ class _BooksScreenState extends State<BooksScreen>
                           _buildReadBooksTabView(),
                           _buildInProgressBooksTabView(),
                           _buildToReadBooksTabView(),
+                          _buildWishlistBooksTabView(),
                         ])
                       : List.of([
                           _buildInProgressBooksTabView(),
                           _buildReadBooksTabView(),
                           _buildToReadBooksTabView(),
+                          _buildWishlistBooksTabView(),
                         ]),
                 ),
               ),
@@ -1003,28 +1013,47 @@ class _BooksScreenState extends State<BooksScreen>
                       controller: _tabController,
                       dividerColor: Colors.transparent,
                       tabs: state.readTabFirst
-                          ? List.of([
-                              BookTab(
-                                text: LocaleKeys.books_finished.tr(),
+                          ? [
+                              Tooltip(
+                                message: LocaleKeys.books_finished.tr(),
+                                child: const Tab(icon: Icon(Icons.done)),
                               ),
-                              BookTab(
-                                text: LocaleKeys.books_in_progress.tr(),
+                              Tooltip(
+                                message: LocaleKeys.books_in_progress.tr(),
+                                child: const Tab(
+                                    icon: Icon(Icons.play_circle_outline)),
                               ),
-                              BookTab(
-                                text: LocaleKeys.books_for_later.tr(),
+                              Tooltip(
+                                message: LocaleKeys.books_for_later.tr(),
+                                child: const Tab(icon: Icon(Icons.schedule)),
                               ),
-                            ])
-                          : List.of([
-                              BookTab(
-                                text: LocaleKeys.books_in_progress.tr(),
+                              Tooltip(
+                                message: LocaleKeys.books_wishlist.tr(),
+                                child: const Tab(
+                                    icon: Icon(Icons.favorite_border)),
                               ),
-                              BookTab(
-                                text: LocaleKeys.books_finished.tr(),
+                            ]
+                          : [
+                              Tooltip(
+                                message: LocaleKeys.books_in_progress.tr(),
+                                child: const Tab(
+                                    icon: Icon(Icons.play_circle_outline)),
                               ),
-                              BookTab(
-                                text: LocaleKeys.books_for_later.tr(),
+                              Tooltip(
+                                message: LocaleKeys.books_finished.tr(),
+                                child: const Tab(
+                                    icon: Icon(Icons.check_circle_outline)),
                               ),
-                            ]),
+                              Tooltip(
+                                message: LocaleKeys.books_for_later.tr(),
+                                child: const Tab(icon: Icon(Icons.schedule)),
+                              ),
+                              Tooltip(
+                                message: LocaleKeys.books_wishlist.tr(),
+                                child: const Tab(
+                                    icon: Icon(Icons.favorite_border)),
+                              ),
+                            ],
                     ),
                   ),
                 );
@@ -1048,11 +1077,26 @@ class _BooksScreenState extends State<BooksScreen>
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  String _getTitleForIndex(int index) {
+    switch (index) {
+      case 0:
+        return LocaleKeys.books_finished.tr();
+      case 1:
+        return LocaleKeys.books_in_progress.tr();
+      case 2:
+        return LocaleKeys.books_for_later.tr();
+      case 3:
+        return LocaleKeys.books_wishlist.tr();
+      default:
+        return Constants.appName;
+    }
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, int currentIndex) {
     AppBar appBar = AppBar(
       backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.9),
-      title: const Text(
-        Constants.appName,
+      title: Text(
+        _getTitleForIndex(currentIndex),
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       actions: [
@@ -1100,6 +1144,73 @@ class _BooksScreenState extends State<BooksScreen>
               ),
             ),
           );
+  }
+
+  StreamBuilder<List<Book>> _buildWishlistBooksTabView() {
+    return StreamBuilder<List<Book>>(
+      stream: bookCubit.wishlistBooks,
+      builder: (context, AsyncSnapshot<List<Book>> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(50),
+                child: Text(
+                  '${LocaleKeys.this_list_is_empty_1.tr()}\n${LocaleKeys.this_list_is_empty_2.tr()}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    letterSpacing: 1.5,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return BlocBuilder<SortBloc, SortState>(
+            builder: (context, state) {
+              if (state is SetSortState) {
+                return BlocBuilder<DisplayBloc, DisplayState>(
+                  builder: (context, displayState) {
+                    if (displayState is GridDisplayState) {
+                      return BooksGrid(
+                        books: _sortForLaterList(
+                          state: state,
+                          list: snapshot.data!,
+                        ),
+                        listNumber: 2,
+                        selectedBookIds: selectedBookIds,
+                        onBookSelectedForMultiSelect: _onItemSelected,
+                        allBooksCount: snapshot.data!.length,
+                      );
+                    } else {
+                      return BooksList(
+                        books: _sortForLaterList(
+                          state: state,
+                          list: snapshot.data!,
+                        ),
+                        listNumber: 2,
+                        selectedBookIds: selectedBookIds,
+                        onBookSelected: _onItemSelected,
+                        allBooksCount: snapshot.data!.length,
+                      );
+                    }
+                  },
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text(
+            snapshot.error.toString(),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   StreamBuilder<List<Book>> _buildToReadBooksTabView() {

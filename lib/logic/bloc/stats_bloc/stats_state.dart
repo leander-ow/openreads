@@ -14,6 +14,7 @@ class StatsLoaded extends StatsState {
   final List<Book> finishedBooks;
   final List<Book> inProgressBooks;
   final List<Book> forLaterBooks;
+  final List<Book> wishlistBooks;
   final List<Book> unfinishedBooks;
   final List<BookReadStat> finishedBooksByMonthAllTypes;
   final List<BookReadStat> finishedBooksByMonthPaperbackBooks;
@@ -40,6 +41,7 @@ class StatsLoaded extends StatsState {
     required this.finishedBooks,
     required this.inProgressBooks,
     required this.forLaterBooks,
+    required this.wishlistBooks,
     required this.unfinishedBooks,
     required this.finishedBooksByMonthAllTypes,
     required this.finishedBooksByMonthPaperbackBooks,
@@ -68,6 +70,7 @@ class StatsLoaded extends StatsState {
         finishedBooks,
         inProgressBooks,
         forLaterBooks,
+        wishlistBooks,
         unfinishedBooks,
         finishedBooksByMonthAllTypes,
         finishedBooksByMonthPaperbackBooks,

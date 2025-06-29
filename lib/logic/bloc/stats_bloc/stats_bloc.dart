@@ -32,6 +32,10 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         allBooks,
         BookStatus.forLater,
       );
+      final wishlistBooks = _filterBooksByStatus(
+        allBooks,
+        BookStatus.wishlist,
+      );
       final unfinishedBooks = _filterBooksByStatus(
         allBooks,
         BookStatus.unfinished,
@@ -74,6 +78,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         finishedBooks: finishedBooks,
         inProgressBooks: inProgressBooks,
         forLaterBooks: forLaterBooks,
+        wishlistBooks: wishlistBooks,
         unfinishedBooks: unfinishedBooks,
         finishedBooksByMonthAllTypes: finishedBooksByMonthAllTypes,
         finishedBooksByMonthPaperbackBooks: finishedBooksByMonthPaperbackBooks,

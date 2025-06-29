@@ -66,6 +66,21 @@ class BookStatusRow extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 10),
+                AnimatedStatusButton(
+                  duration: animDuration,
+                  height: defaultHeight,
+                  icon: Icons.favorite_border,
+                  text: LocaleKeys.book_status_wishlist.tr(),
+                  isSelected: state.status == BookStatus.wishlist,
+                  currentStatus: state.status,
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    context
+                        .read<EditBookCubit>()
+                        .setStatus(BookStatus.wishlist);
+                  },
+                ),
+              const SizedBox(width: 10),
               AnimatedStatusButton(
                 duration: animDuration,
                 height: defaultHeight,

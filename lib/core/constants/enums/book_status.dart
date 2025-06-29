@@ -3,6 +3,7 @@ enum BookStatus {
   inProgress,
   forLater,
   unfinished,
+  wishlist,
 }
 
 extension BookStatusExtension on BookStatus {
@@ -16,6 +17,8 @@ extension BookStatusExtension on BookStatus {
         return 2;
       case BookStatus.unfinished:
         return 3;
+      case BookStatus.wishlist:
+        return 4;
       default:
         return 0;
     }
@@ -32,6 +35,8 @@ BookStatus parseBookStatus(int value) {
       return BookStatus.forLater;
     case 3:
       return BookStatus.unfinished;
+    case 4:
+      return BookStatus.wishlist;
     default:
       return BookStatus.read;
   }

@@ -116,7 +116,9 @@ class CSVExport {
                   ? 'in_progress'
                   : book.status == BookStatus.forLater
                       ? 'planned'
-                      : book.status == BookStatus.unfinished
+                      : book.status == BookStatus.wishlist
+                        ? 'wishlist'
+                        : book.status == BookStatus.unfinished
                           ? 'abandoned'
                           : 'unknown',
         );
