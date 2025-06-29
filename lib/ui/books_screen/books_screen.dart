@@ -897,9 +897,7 @@ class _BooksScreenState extends State<BooksScreen>
     _tabController = TabController(length: 4, vsync: this);
 
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        setState(() {});
-      }
+      setState(() {});
     });
   }
 
